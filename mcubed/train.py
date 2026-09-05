@@ -52,6 +52,9 @@ def validate(c):
 def train(args):
     c = json.loads(Path(args.config).read_text())
     validate(c)
+    init_from = getattr(args, 'init_from', None)
+    if args.resume and init_from:
+        raise ValueError('Use either resume or init-from, not both.')
     if args.hourly_usd < 0 or not math.isfinite(args.hourly_usd):
         raise ValueError('Hourly rate must be a finite nonnegative value.')
     device = device_for(args.device)
@@ -70,6 +73,7 @@ def train(args):
     rng = torch.Generator().manual_seed(c['seed'])
     step, elapsed_prior, best, initial_val = 0, 0.0, float('inf'), None
     current_source = provenance()
+    initialization = None
     if args.resume:
         ckpt = torch.load(run / 'last.pt', map_location='cpu', weights_only=True)
         if ckpt['config'] != c or ckpt['data_hash'] != data_hash:
@@ -83,7 +87,29 @@ def train(args):
         rng.set_state(ckpt['batch_rng'])
         torch.set_rng_state(ckpt['torch_rng'])
         step, elapsed_prior, best, initial_val = (ckpt[k] for k in ('step', 'elapsed_seconds', 'best_val', 'initial_val'))
+        initialization = ckpt.get('initialization')
     else:
+        if init_from:
+            parent_path = Path(init_from)
+            parent = torch.load(parent_path, map_location='cpu', weights_only=True)
+            if parent['model_config'] != asdict(model_config):
+                raise ValueError('Warm start requires the same model and dataset/tokenizer boundaries.')
+            if parent['data_hash'] != data_hash:
+                parent_manifest_path = parent_path.parent / 'data-manifest.json'
+                parent_manifest = json.loads(parent_manifest_path.read_text())
+                if digest(parent_manifest_path) != parent['data_hash'] or any(
+                    parent_manifest['sha256'][name] != manifest['sha256'][name]
+                    for name in ('tokenizer.json', 'val.jsonl', 'val.bin', 'test.jsonl', 'test.bin')):
+                    raise ValueError('Warm start must preserve tokenizer and held-out files.')
+            model.load_state_dict(parent['model'])
+            pc = parent['config']
+            inherited = parent.get('initialization') or {}
+            initialization = {'checkpoint': str(parent_path), 'sha256': digest(parent_path),
+                'step': parent['step'], 'optimizer': 'reset', 'data_hash': parent['data_hash'],
+                'ancestor_tokens_seen': inherited.get('ancestor_tokens_seen', 0)
+                    + parent['step'] * pc['batch_size'] * pc['block_size'] * pc['gradient_accumulation'],
+                'ancestor_elapsed_seconds': inherited.get('ancestor_elapsed_seconds', 0)
+                    + parent['elapsed_seconds']}
         run.mkdir(parents=True, exist_ok=False)
         write_json(run / 'config.json', c)
         (run / 'tokenizer.json').write_bytes((root / 'tokenizer.json').read_bytes())
@@ -93,7 +119,7 @@ def train(args):
             'parameters_without_token_and_position_embeddings': sum(p.numel() for p in model.parameters())
                 - model.embedding.weight.numel(),
             'hourly_usd': args.hourly_usd, 'cost_scope': 'process runtime x supplied rate; excludes idle VM/storage/network/electricity/API fees',
-            'data_hash': data_hash})
+            'data_hash': data_hash, 'initialization': initialization})
     stopped = False
     def stop(signum, frame):
         nonlocal stopped
@@ -105,6 +131,7 @@ def train(args):
     log = (run / 'metrics.jsonl').open('a', buffering=1)
     def emit(event):
         event.update(elapsed_seconds=round(elapsed(), 3), step=step, tokens_seen=step * tokens_per_step,
+                     cumulative_tokens_seen=(initialization or {}).get('ancestor_tokens_seen', 0) + step * tokens_per_step,
                      estimated_compute_usd=elapsed() / 3600 * args.hourly_usd)
         line = json.dumps(event, allow_nan=False)
         log.write(line + '\n')
@@ -115,7 +142,7 @@ def train(args):
             'elapsed_seconds': elapsed(), 'best_val': best, 'initial_val': initial_val,
             'batch_rng': rng.get_state(), 'torch_rng': torch.get_rng_state(),
             'data_hash': data_hash, 'source_sha256': current_source['source_sha256'],
-            'device': device, 'hourly_usd': args.hourly_usd}
+            'device': device, 'hourly_usd': args.hourly_usd, 'initialization': initialization}
         tmp = path.with_suffix('.tmp')
         torch.save(payload, tmp)
         tmp.replace(path)
@@ -170,6 +197,9 @@ def train(args):
         save(run / 'last.pt')
         status = 'stopped' if stopped else 'complete' if step == c['max_steps'] else 'time_limit'
         summary = {'status': status, 'step': step, 'best_val_loss': best, 'initial_val_loss': initial_val,
+            'initialization': initialization,
+            'cumulative_tokens_seen': (initialization or {}).get('ancestor_tokens_seen', 0) + step * tokens_per_step,
+            'cumulative_elapsed_seconds': (initialization or {}).get('ancestor_elapsed_seconds', 0) + elapsed(),
             'loss_reduced': best < initial_val, 'elapsed_seconds': elapsed(), 'tokens_seen': step * tokens_per_step,
             'estimated_compute_usd': elapsed() / 3600 * args.hourly_usd,
             'parameters_total': sum(p.numel() for p in model.parameters()),
@@ -195,4 +225,5 @@ if __name__ == '__main__':
     p.add_argument('--device', choices=['auto', 'cpu', 'mps', 'cuda'], default='auto')
     p.add_argument('--hourly-usd', type=float, default=0)
     p.add_argument('--resume', action='store_true')
+    p.add_argument('--init-from', help='Weights-only warm start for a new run; resets optimizer and schedule.')
     train(p.parse_args())

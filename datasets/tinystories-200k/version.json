@@ -1,0 +1,19 @@
+{
+  "id": "tinystories-200k",
+  "registered_at": "2026-09-05T17:18:02.836597+00:00",
+  "manifest_sha256": "265620e67094a32f45eebbfdaa8312d0845eba3593601ef22926a2227961864e",
+  "artifact_directory": "data/tinystories-200k",
+  "registration_source_commit": "56b06e9eeb252ee57c8cef664e65c39ca9a6a04b",
+  "preparation_script_sha256_at_registration": "0ea0c1b453432fbb93b8473b88ebf1b6f63283af2e3f0bebaaac42df51eb9d2b",
+  "source_revision": "f54c09fd23315a6f9c86f9dc80f725de7d8f9c64",
+  "storage": "Local data/ directory now; mount the same relative layout on Linux. Large files are not in Git.",
+  "recovery": "Use pinned upstream URLs and recorded selection, plus the committed tokenizer; verify resulting file hashes before use.",
+  "expansion_script_sha256_at_registration": "19a664ffc2b0aa6ae11d6805d26dce622a349e72c3b194511c3e7854c4f3dac2",
+  "archive": {
+    "path": "data/archives/tinystories-200k-265620e67094.tar.gz",
+    "sha256": "c1fe5c7512859ef43dcccb5013e195be306afc1e087c43fe887de3f7eb2b009e",
+    "bytes": 103667323,
+    "format": "tar.gz",
+    "published_url": null
+  }
+}

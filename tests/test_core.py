@@ -12,8 +12,15 @@ import torch
 from mcubed.model import GPT, GPTConfig
 from mcubed.common import digest, verify_data, write_json
 from mcubed.prepare import select
+from tools.expand_dataset import expand
 from mcubed.train import batch, evaluate, train
 from mcubed.evaluate import test as score_test
+
+
+def model_from_checkpoint(state):
+    model = GPT(GPTConfig(**state['model_config']))
+    model.load_state_dict(state['model'])
+    return model
 
 
 class CoreTests(unittest.TestCase):
@@ -47,6 +54,21 @@ class CoreTests(unittest.TestCase):
         seen = set()
         self.assertEqual(select(iter(['a story', 'a  story', 'new']), 2, seen), ['a story', 'new'])
         self.assertEqual(select(iter(['a story', 'held out']), 1, seen), ['held out'])
+
+    def test_expansion_preserves_heldout_and_tokenizer(self):
+        from unittest.mock import patch
+        from mcubed.prepare import prepare
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            parent, out = Path(tmp) / 'parent', Path(tmp) / 'expanded'
+            with patch('mcubed.prepare.stories', side_effect=[iter(['a cat', 'a dog']), iter(['a bird', 'a fish'])]):
+                prepare(parent, 2, 2, 257)
+            with patch('tools.expand_dataset.stories', return_value=iter(['a bird', 'a fish', 'a cat', 'a  cat', 'a dog', 'a horse'])):
+                expand(parent, out, 3)
+            for name in ('tokenizer.json', 'val.bin', 'val.jsonl', 'test.bin', 'test.jsonl'):
+                self.assertEqual(digest(parent / name), digest(out / name))
+            self.assertEqual([json.loads(line)['text'] for line in (out / 'train.jsonl').read_text().splitlines()],
+                             ['a cat', 'a dog', 'a horse'])
+            self.assertEqual(verify_data(out)['parent_manifest_sha256'], digest(parent / 'manifest.json'))
 
     def test_heldout_scoring_covers_tail_and_preserves_report(self):
         with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
@@ -104,6 +126,27 @@ class CoreTests(unittest.TestCase):
             self.assertEqual(b['step'], 3)
             for key in a['model']:
                 torch.testing.assert_close(a['model'][key], b['model'][key], rtol=0, atol=0)
+            # Warm start loads only weights into a fresh run, with an explicit lineage.
+            warm = root / 'warm'
+            warm_args = args(warm)
+            warm_args.init_from = str(full / 'last.pt')
+            def check_first_step(opt, *aa, **kw):
+                self.assertEqual(len(opt.state), 0)
+                (warm / 'STOP').touch()
+                return original(opt, *aa, **kw)
+            with patch.object(torch.optim.AdamW, 'step', check_first_step):
+                train(warm_args)
+            w = torch.load(warm / 'last.pt', weights_only=True)
+            self.assertEqual(w['step'], 1)
+            self.assertEqual(w['initialization']['sha256'], digest(full / 'last.pt'))
+            self.assertEqual(w['initialization']['ancestor_tokens_seen'], 3 * 2 * 8 * c['gradient_accumulation'])
+            self.assertEqual(w['initial_val'], evaluate(model_from_checkpoint(a),
+                np.memmap(data / 'val.bin', dtype='<u2', mode='r'), c, 'cpu'))
+            c['n_layer'] = 2
+            write_json(config, c)
+            warm_args.out = str(root / 'incompatible')
+            with self.assertRaisesRegex(ValueError, 'same model and dataset'):
+                train(warm_args)
             with (data / 'val.bin').open('ab') as f:
                 f.write(b'xx')
             with self.assertRaisesRegex(ValueError, 'Dataset file changed'):

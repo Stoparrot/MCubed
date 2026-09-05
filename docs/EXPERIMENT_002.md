@@ -28,3 +28,11 @@ The 1,000-step baseline reached train loss 3.5555 and validation loss 3.5619, wi
 ## Capacity comparison
 
 The small model completed 10,000 steps in 386.47 seconds, train loss 2.3222 / validation 2.3893. Fixed-prompt outputs still lose characters/events and repeat phrases; the development target is not met. Next: six layers, width 256, four heads (5,767,168 parameters), with the same 20k-story data, tokenizer, 256-token context, 40.96M training tokens, optimizer and schedule. Only depth/width increase; the process cap is 30 minutes to allow the larger model to complete the same token budget. This is a larger positive control, not a minimum claim.
+
+## Expanded-data continuation
+
+The 5.77M model completed its 40.96M-token run in 1,239.43 seconds. Final train loss 1.7075 / validation 1.9823. All 20 fixed samples are retained; character confusion, repetition and event contradictions remain common. The widening generalization gap motivates a larger training subset rather than further repetition of only 20k stories.
+
+Next fixed configuration: `configs/coherence-expanded.json`, the same model/context and tokenizer, 200,000 unique training stories from the same pinned source. Copy validation/test files and tokenizer byte-for-byte, exclude their normalized story hashes from training, and register a new manifest. Start from `runs/coherence-medium-001/best.pt` at step 10,000, recording its hash; reset AdamW and use learning rate 0.0003 → 0.00003, warmup 100 steps, seed 1338. The new phase allows 15,000 steps / 61.44M additional tokens, at most 1,800 seconds. Total lineage is at most 102.4M tokens. Completed additional runs so far used 1,625.90 seconds; this phase keeps total measured training below the 60-minute round budget, apart from bounded evaluation/save overhead.
+
+This phase changes data and optimization schedule together and is a practical quality improvement, not a controlled estimate of the effect of data alone. Keep the same 20-prompt generation protocol and rubric. Do not evaluate the real test set unless a final candidate is selected. Archive all data locally; the user declined remote archive upload.

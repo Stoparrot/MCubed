@@ -8,5 +8,8 @@ COPY LICENSE .
 COPY mcubed mcubed
 COPY vendor vendor
 COPY configs configs
+COPY dashboard dashboard
+COPY datasets datasets
+COPY tools tools
 ENV PYTHONUNBUFFERED=1
 CMD ["python", "-m", "mcubed.doctor"]

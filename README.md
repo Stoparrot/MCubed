@@ -75,7 +75,19 @@ Do not use this command during pilot debugging or a parameter search. The test r
 | `runs/.../summary.json` | Completion/stop reason, quality change, model size and totals |
 | `runs/.../failure.json` | Failure record, if a run errors |
 
-The terminal report is the first monitoring interface. A browser dashboard with launch approvals, cloud management and multi-user controls is future work. The present CLI does not enforce GitHub approvals; use it as a local development tool.
+## Dashboard and versioned data
+
+```sh
+.venv/bin/python -m dashboard.server --device cpu --port 8765
+```
+
+Open http://127.0.0.1:8765 for experiment curves, saved development samples, local inference, story chat and a paginated dataset browser. See [dashboard and Linux setup](docs/DASHBOARD.md). Training launch/stop approvals and cloud management remain future work.
+
+Dataset manifests, the tokenizer and archive checksums are versioned in [datasets](datasets/README.md). The exact compressed archive stays local in `data/archives/`; it is not uploaded or committed. Transfer that archive separately when moving to Linux, then restore with the documented checksum-verifying command.
+
+To continue training under a new schedule, choose a new config and run directory and pass `--init-from runs/PARENT/best.pt`. This loads weights only and resets the optimizer; parent hashes and cumulative training tokens are recorded. `--resume` instead retains the original optimizer and unchanged schedule.
+
+The present CLI does not enforce GitHub approvals; use it as a local development tool.
 
 `--hourly-usd RATE` on the trainer logs process time × supplied rate. The default zero means no purchased cloud compute. It excludes electricity, Codex usage, storage, network and VM idle time. Report estimates exclude evaluation and startup overhead and apply only to measured hardware/configuration. They are not provider quotes or spending controls.
 
@@ -97,7 +109,7 @@ docker run --rm --gpus all mcubed:cuda
 docker run --rm --gpus all -v "$PWD/data:/workspace/data:ro" -v "$PWD/runs:/workspace/runs" mcubed:cuda python -m mcubed.train --out runs/cuda-pilot --device cuda
 ```
 
-The CPU image is verified on Linux ARM64 in Docker Desktop: build, device check, all five correctness tests, training, checkpoint persistence and inference passed. It also loads the earlier Mac-trained checkpoint. The CUDA definition passes Docker build checks and its base digest resolves, but its full build and GPU execution still require verification on Linux x86-64 with NVIDIA hardware. Both base images are pinned by digest; the CPU image explicitly installs CPU-only PyTorch. See [verification details](docs/DOCKER_VERIFICATION.md). No cloud resources are provisioned; stopping a training process does not stop cloud billing.
+The CPU image is verified on Linux ARM64 in Docker Desktop: build, device check, all seven correctness tests, training, checkpoint persistence and inference passed. It also loads the earlier Mac-trained checkpoint. The CUDA definition passes Docker build checks and its base digest resolves, but its full build and GPU execution still require verification on Linux x86-64 with NVIDIA hardware. Both base images are pinned by digest; the CPU image explicitly installs CPU-only PyTorch. See [verification details](docs/DOCKER_VERIFICATION.md). No cloud resources are provisioned; stopping a training process does not stop cloud billing.
 
 ## GitHub and provenance
 

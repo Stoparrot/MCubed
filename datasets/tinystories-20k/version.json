@@ -7,5 +7,12 @@
   "preparation_script_sha256_at_registration": "0ea0c1b453432fbb93b8473b88ebf1b6f63283af2e3f0bebaaac42df51eb9d2b",
   "source_revision": "f54c09fd23315a6f9c86f9dc80f725de7d8f9c64",
   "storage": "Local data/ directory now; mount the same relative layout on Linux. Large files are not in Git.",
-  "recovery": "Use pinned upstream URLs and recorded selection, plus the committed tokenizer; verify resulting file hashes before use."
+  "recovery": "Use pinned upstream URLs and recorded selection, plus the committed tokenizer; verify resulting file hashes before use.",
+  "archive": {
+    "path": "data/archives/tinystories-20k-ba66e1b75b1b.tar.gz",
+    "sha256": "5d277e84b552ca86c05ddb08ac6ad4b61ccd5b1afe53c0ab9a98163f5549878d",
+    "bytes": 10690303,
+    "format": "tar.gz",
+    "published_url": null
+  }
 }

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>M³ · Experiment lab</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header class="top"><a class="brand" href="/">M³ <span>Minimum Multimodal Model</span></a><div class="connection"><span class="dot"></span><span id="connection">Connecting to local lab</span></div></header>
+<div class="workspace">
+<aside><div class="rail-label">WORKSPACE</div><nav aria-label="Workspace"><button class="nav active" data-tab="experiments">Experiments <span>01</span></button><button class="nav" data-tab="playground">Playground <span>02</span></button><button class="nav" data-tab="data">Data versions <span>03</span></button></nav><div class="rail-note"><strong>Small models. Measured progress.</strong><p>Text-only research baseline.<br>One experiment at a time.</p></div></aside>
+<main>
+<div id="error" class="error" role="alert" hidden></div>
+<form id="auth" class="panel" hidden><label>Server access token <input id="access-token" type="password" autocomplete="off"></label><button class="primary">Connect</button></form>
+<section id="experiments" class="page">
+<div class="page-heading"><div><p class="eyebrow">THE LAB NOTEBOOK</p><h1>Experiments</h1><p class="muted">See what changed, what learned, and what comes next.</p></div><label class="select-label">Selected run<select id="run-select"></select></label></div>
+<div id="metric-cards" class="metrics"></div>
+<div class="panel chart-panel"><div class="panel-heading"><div><h2>Learning curve</h2><p class="muted">Cross-entropy loss · lower is better</p></div><div class="legend"><span class="train-key">Training</span><span class="val-key">Validation</span></div></div><svg id="loss-chart" viewBox="0 0 900 250" role="img" aria-label="Training and validation loss by step"></svg><div class="chart-foot"><span>Optimizer steps</span><span id="run-status"></span></div></div>
+<div class="panel"><div class="panel-heading"><h2>Run history</h2><span class="muted">Local artifacts · updates every 5 seconds</span></div><div class="table-scroll"><table><thead><tr><th>Experiment</th><th>Parameters</th><th>Steps</th><th>Validation</th><th>Device</th><th>Status</th></tr></thead><tbody id="runs-table"></tbody></table></div></div>
+<div class="details-grid"><div class="panel"><h2>Reproducibility</h2><dl id="provenance"></dl><details><summary>Full configuration</summary><pre id="config"></pre></details></div><div class="panel"><h2>Fixed-prompt samples</h2><p class="muted">All saved development outputs. These are not held-out test results.</p><div id="samples" class="samples"></div></div></div>
+</section>
+<section id="playground" class="page" hidden>
+<div class="page-heading"><div><p class="eyebrow">MEET THE CHECKPOINT</p><h1>Playground</h1><p class="muted">Try a story opening, or build a story together.</p></div></div>
+<div class="play-layout"><div class="panel controls"><label>Model checkpoint<select id="model-select"></select></label><label>Mode<select id="mode"><option value="completion">Story completion</option><option value="chat">Story chat</option></select></label><label>Maximum new tokens<input id="tokens" type="number" min="1" max="256" value="120"></label><label>Temperature<input id="temperature" type="number" min="0.1" max="1.5" step="0.1" value="0.7"></label><label>Seed<input id="seed" type="number" min="0" max="4294967295" value="42"></label><div class="model-note"><strong>Base model</strong><p>Trained on short stories. It continues text; it has not been trained to follow instructions or answer questions reliably.</p><p id="inference-device"></p></div></div>
+<div class="panel conversation"><div class="conversation-top"><h2 id="conversation-title">Story completion</h2><button id="clear" class="quiet">Clear</button></div><div id="messages" class="messages"><div class="empty-message"><span class="monogram">M³</span><h3>A story starts with you.</h3><p>“Once upon a time, a little rabbit found a red ball…”</p></div></div><form id="generate"><label class="sr-only" for="prompt">Your story opening</label><textarea id="prompt" rows="3" placeholder="Write the beginning of a story…" required>Once upon a time, a little rabbit found a red ball in the garden.</textarea><div class="composer-foot"><span id="generation-meta">Your prompts stay on this server.</span><button id="generate-button" class="primary">Continue story ↗</button></div></form></div></div>
+</section>
+<section id="data" class="page" hidden>
+<div class="page-heading"><div><p class="eyebrow">KNOW WHAT WENT IN</p><h1>Data versions</h1><p class="muted">Exact sources, committed manifests, and the stories used for training.</p></div><label class="select-label">Dataset version<select id="dataset-select"></select></label></div>
+<div id="data-cards" class="metrics"></div><div class="panel"><h2>Version record</h2><dl id="dataset-record"></dl><div id="dataset-links" class="links"></div><p class="muted">Manifests and tokenizers are versioned in Git. Full data files live in mounted artifact storage. The test split stays sealed during model selection.</p></div>
+<div class="panel"><div class="panel-heading"><h2>Story browser</h2><label>Split<select id="split"><option value="train">Training</option><option value="val">Validation</option></select></label></div><div id="stories" class="stories"></div><div class="pagination"><button id="previous" class="quiet">← Previous</button><span id="page-count"></span><button id="next" class="quiet">Next →</button></div></div>
+</section>
+<footer>M³ RESEARCH LOG <span>Quality claims follow evidence.</span></footer>
+</main></div><script src="/app.js"></script>
+</body></html>
