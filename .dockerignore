@@ -1,5 +1,6 @@
 *
 !requirements.txt
+!LICENSE
 !mcubed/
 !mcubed/**
 !vendor/

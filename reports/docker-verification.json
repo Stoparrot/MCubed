@@ -1,0 +1,61 @@
+{
+  "date": "2026-09-05",
+  "scope": "Docker verification; development smoke run, not a scientific comparison",
+  "cpu": {
+    "image_id": "sha256:744e3b7d06a42f5c0d2e06060bcaecfb53c5455d983397bea70408595d4e37ce",
+    "platform": "linux/arm64",
+    "python": "3.11.16",
+    "torch": "2.8.0+cpu",
+    "build_passed": true,
+    "pip_check_passed": true,
+    "doctor_passed": true,
+    "tests_passed": 5,
+    "config": {
+      "seed": 1337,
+      "n_layer": 4,
+      "n_head": 4,
+      "n_embd": 128,
+      "block_size": 256,
+      "batch_size": 2,
+      "gradient_accumulation": 1,
+      "max_steps": 5,
+      "eval_interval": 5,
+      "eval_batches": 2,
+      "learning_rate": 0.0006,
+      "min_lr": 6e-05,
+      "warmup_steps": 1,
+      "weight_decay": 0.1,
+      "grad_clip": 1.0,
+      "max_seconds": 60
+    },
+    "training": {
+      "status": "complete",
+      "step": 5,
+      "best_val_loss": 7.511981010437012,
+      "initial_val_loss": 7.6241655349731445,
+      "loss_reduced": true,
+      "elapsed_seconds": 0.40127908299996307,
+      "tokens_seen": 2560,
+      "estimated_compute_usd": 0.0,
+      "parameters_total": 1310720,
+      "weights_fp32_bytes": 5242880,
+      "checkpoint_bytes": 15760021
+    },
+    "inference_passed": true,
+    "native_mac_checkpoint_inference_passed": true,
+    "network_during_runtime": "none",
+    "runtime_limits": {
+      "cpus": 4,
+      "memory": "4g"
+    }
+  },
+  "cuda": {
+    "base_digest": "sha256:417bd75df6365104c283ea4c1651fb3530d9eb5a4c2fafa51943cff2a94e6385",
+    "platform": "linux/amd64",
+    "build_check_passed": true,
+    "build_check_warnings": 0,
+    "full_build_verified": false,
+    "gpu_execution_verified": false,
+    "limitation": "No NVIDIA GPU on this Mac; image layers were not downloaded for a full CUDA build."
+  }
+}

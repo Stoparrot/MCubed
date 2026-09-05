@@ -89,15 +89,15 @@ docker run --rm mcubed:cpu
 docker run --rm -v "$PWD/data:/workspace/data:ro" -v "$PWD/runs:/workspace/runs" mcubed:cpu python -m mcubed.train --out runs/container-pilot --device cpu
 ```
 
-On a Linux NVIDIA host with compatible drivers and NVIDIA Container Toolkit:
+On a Linux **x86-64** NVIDIA host with compatible drivers and NVIDIA Container Toolkit:
 
 ```sh
-docker build -f Dockerfile.cuda -t mcubed:cuda .
+docker build --platform linux/amd64 -f Dockerfile.cuda -t mcubed:cuda .
 docker run --rm --gpus all mcubed:cuda
 docker run --rm --gpus all -v "$PWD/data:/workspace/data:ro" -v "$PWD/runs:/workspace/runs" mcubed:cuda python -m mcubed.train --out runs/cuda-pilot --device cuda
 ```
 
-These images are starting definitions, not yet verified cloud runtimes. Base image tags must be resolved to digests before formal cloud runs. CPU and GPU dependencies differ at the platform level. No cloud resources are provisioned; stopping a training process does not stop cloud billing.
+The CPU image is verified on Linux ARM64 in Docker Desktop: build, device check, all five correctness tests, training, checkpoint persistence and inference passed. It also loads the earlier Mac-trained checkpoint. The CUDA definition passes Docker build checks and its base digest resolves, but its full build and GPU execution still require verification on Linux x86-64 with NVIDIA hardware. Both base images are pinned by digest; the CPU image explicitly installs CPU-only PyTorch. See [verification details](docs/DOCKER_VERIFICATION.md). No cloud resources are provisioned; stopping a training process does not stop cloud billing.
 
 ## GitHub and provenance
 
