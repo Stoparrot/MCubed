@@ -24,3 +24,7 @@ Keep all changes and failures. Report observed coherence, remaining weaknesses, 
 ## First decision
 
 The 1,000-step baseline reached train loss 3.5555 and validation loss 3.5619, with confused characters and events across the saved development samples. The gap is small. Next run: `configs/coherence-small.json`, same data/tokenizer/model, random initialization, 10,000 steps / 40.96M sampled tokens, maximum 20 minutes. Only training duration, evaluation interval and warmup schedule change. This isolates whether more training is enough before expanding capacity.
+
+## Capacity comparison
+
+The small model completed 10,000 steps in 386.47 seconds, train loss 2.3222 / validation 2.3893. Fixed-prompt outputs still lose characters/events and repeat phrases; the development target is not met. Next: six layers, width 256, four heads (5,767,168 parameters), with the same 20k-story data, tokenizer, 256-token context, 40.96M training tokens, optimizer and schedule. Only depth/width increase; the process cap is 30 minutes to allow the larger model to complete the same token budget. This is a larger positive control, not a minimum claim.
