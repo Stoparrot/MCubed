@@ -1,0 +1,9 @@
+*
+!requirements.txt
+!mcubed/
+!mcubed/**
+!vendor/
+!vendor/**
+!configs/
+!configs/**
+**/__pycache__
