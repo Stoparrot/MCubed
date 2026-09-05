@@ -1,6 +1,6 @@
 # M³ status
 
-Updated: 2026-09-05. Pilot and initial coherence comparisons complete; expanded-data continuation is next.
+Updated: 2026-09-05. Training stopped by user request; grammar/world/interpretability proposals are ready for review.
 
 - Workspace: `/Users/uw/Desktop/MCubed`; remote: `https://github.com/Stoparrot/MCubed` (public).
 - Mac: Apple Silicon, 24 GiB memory, macOS 26.6.2. Project Python 3.11.11, PyTorch 2.8.0. Native MPS forward/backward verified outside the Codex sandbox. CPU fallback verified.
@@ -13,7 +13,8 @@ Updated: 2026-09-05. Pilot and initial coherence comparisons complete; expanded-
 - Checkpoint reload and generation verified on both CPU and MPS. Output contains recognizable words but is not coherent. Different generation lengths/devices were used; these are functional checks, not a comparative latency benchmark.
 - Held-out evaluation code verified with synthetic uniform logits, including the final partial window. Real test stories remain untouched.
 - Experiment 002 froze 20 development prompts and a four-part coherence rubric before the sweep. Completed: 1.31M baseline (1k steps, val 3.5619), 1.31M longer run (10k steps, val 2.3893), 5.77M positive control (10k steps, val 1.9823). Samples still show substantial event/character confusion; coherence target is not met.
-- Next: bounded weights-only continuation on 200k training stories, preserving tokenizer and validation/test files. See `docs/EXPERIMENT_002.md`.
+- Expanded-data continuation stopped cleanly by user request at step 555 after 69.01 seconds / 2,273,280 additional tokens. Checkpoints and STOP file preserved. No training is running. Its changed sampling seed means validation is not directly matched to the parent run; no conclusion about expanded data is established.
+- Next scope is inductive generalization from examples, separate grammar/coherence/entity-acquisition verifiers, and a six-state text world. Review `docs/EXPERIMENT_003.md` (33 hypotheses), `docs/MINIMAL_WORLD.md`, `docs/GRAMMAR_RESEARCH.md` and `docs/INTERPRETABILITY.md` before implementation or training. These are proposals; no grammar/world corpus, probes or new training runs have started. No explicit rules or deduction traces will be supplied to the model.
 - Local dashboard implemented: experiment curves/provenance, fixed samples, completion/story chat and paginated dataset viewing. Local and authenticated Linux CPU container API/inference checks passed. Browser visual QA was not performed. See `docs/DASHBOARD.md`.
 - Exact compressed dataset archives remain local by user choice. Git tracks metadata, fitted tokenizer, notices and archive checksums. No data archive or weights uploaded.
 - No cloud provider selected, no cloud spend authorized, no recurring job enabled, no dashboard training controls implemented. These are staged requirements after the text baseline.

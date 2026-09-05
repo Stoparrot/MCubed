@@ -4,6 +4,8 @@ M-cubed studies how small an understandable model can be while still passing a d
 
 The first Mac GPU pilot passed: 200 steps in 55 seconds, validation loss 7.624 → 4.930. Text generation works but remains incoherent. See [pilot results](reports/pilot-001.json).
 
+Training is currently stopped. The next proposed study separates grammar, a [six-state coherent world](docs/MINIMAL_WORLD.md), and [causal interpretability](docs/INTERPRETABILITY.md). Review the [33 experiment hypotheses](docs/EXPERIMENT_003.md) and [research note](docs/GRAMMAR_RESEARCH.md) before new training.
+
 Start with [requirements](docs/REQUIREMENTS.md), [experiment 001](docs/EXPERIMENT_001.md), [current status](docs/STATUS.md), and [Codex setup](docs/CODEX.md).
 
 ## Run on this Mac
@@ -109,7 +111,7 @@ docker run --rm --gpus all mcubed:cuda
 docker run --rm --gpus all -v "$PWD/data:/workspace/data:ro" -v "$PWD/runs:/workspace/runs" mcubed:cuda python -m mcubed.train --out runs/cuda-pilot --device cuda
 ```
 
-The CPU image is verified on Linux ARM64 in Docker Desktop: build, device check, all seven correctness tests, training, checkpoint persistence and inference passed. It also loads the earlier Mac-trained checkpoint. The CUDA definition passes Docker build checks and its base digest resolves, but its full build and GPU execution still require verification on Linux x86-64 with NVIDIA hardware. Both base images are pinned by digest; the CPU image explicitly installs CPU-only PyTorch. See [verification details](docs/DOCKER_VERIFICATION.md). No cloud resources are provisioned; stopping a training process does not stop cloud billing.
+The CPU image is verified on Linux ARM64 in Docker Desktop: build, device check, all eight correctness tests, training, checkpoint persistence and inference passed. It also loads the earlier Mac-trained checkpoint. The CUDA definition passes Docker build checks and its base digest resolves, but its full build and GPU execution still require verification on Linux x86-64 with NVIDIA hardware. Both base images are pinned by digest; the CPU image explicitly installs CPU-only PyTorch. See [verification details](docs/DOCKER_VERIFICATION.md). No cloud resources are provisioned; stopping a training process does not stop cloud billing.
 
 ## GitHub and provenance
 
