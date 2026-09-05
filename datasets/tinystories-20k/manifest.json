@@ -1,0 +1,35 @@
+{
+  "dataset": "roneneldan/TinyStories",
+  "revision": "f54c09fd23315a6f9c86f9dc80f725de7d8f9c64",
+  "urls": {
+    "train": "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/f54c09fd23315a6f9c86f9dc80f725de7d8f9c64/TinyStories-train.txt",
+    "valid": "https://huggingface.co/datasets/roneneldan/TinyStories/resolve/f54c09fd23315a6f9c86f9dc80f725de7d8f9c64/TinyStories-valid.txt"
+  },
+  "variant": "original TinyStories text files (not V2-GPT4)",
+  "selection": "first N unique stories in upstream order; whitespace-normalized SHA256 dedup across selected splits; valid alternates val/test",
+  "vocab_size": 2048,
+  "eos_id": 0,
+  "splits": {
+    "train": {
+      "stories": 20000,
+      "tokens": 4908839
+    },
+    "val": {
+      "stories": 500,
+      "tokens": 106549
+    },
+    "test": {
+      "stories": 500,
+      "tokens": 107916
+    }
+  },
+  "sha256": {
+    "test.bin": "91366d3df795e5d211487bd7d64a1ebb92c8dd2766f78997ea1f589a0dee94cd",
+    "test.jsonl": "1793a296c585582cab4931dfb1ebd66d50c00ad5a50fd3d85b7606c3543811d6",
+    "tokenizer.json": "4790a1b2112c926d171f0b3eefc0a02ebc2c00e50048ea45a13a380b058ba828",
+    "train.bin": "afb01ce9d3daa1f69a8ab0bc6c0e5be31cbf82e55cf56bd47d6c31090950564f",
+    "train.jsonl": "bb35efaa19574b8642b2f00624051df1dc2cdc506432495434dc3229540bde32",
+    "val.bin": "222b11fe80158b0d4f6226734ec8f3bd229891ec90f21a052f677265f9e2daef",
+    "val.jsonl": "44015ecc45655451e59dbfe4ae6a0a516b35679d5ce161c9c7cb6a478591d1e8"
+  }
+}

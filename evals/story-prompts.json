@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "purpose": "Development prompts for comparing story continuation; never a held-out capability benchmark.",
+  "seed": 42,
+  "temperature": 0.7,
+  "top_k": 50,
+  "max_new_tokens": 160,
+  "prompts": [
+    "Once upon a time, a little rabbit found a red ball in the garden.",
+    "Lily wanted to help her mother bake a cake. First, she",
+    "Tom lost his favorite toy under the bed. He looked",
+    "A small bird could not fly. Its friend came to help and",
+    "It was raining outside, so Mia and her brother decided to",
+    "Ben planted a tiny seed in a pot. Every morning, he",
+    "The little dog was afraid of the loud thunder. Anna",
+    "Lucy had two apples. She gave one to her friend because",
+    "A boy found a lost kitten near his house. He gently",
+    "Sam wanted to cross the stream, but the bridge was broken.",
+    "The bear and the fox both wanted the same toy. Then",
+    "Ella forgot to close the garden gate. Soon, the little goat",
+    "A girl made a paper boat and put it in a puddle. The boat",
+    "Max could not reach the book on the shelf. He asked",
+    "The children built a tall tower with blocks. Suddenly,",
+    "A little mouse heard someone crying behind a tree. It",
+    "Nina was learning to ride her bicycle. Her father",
+    "The duck found a shiny stone by the pond. It wanted to",
+    "Jack promised to water the flowers, but he forgot. The next day,",
+    "Two friends went for a walk in the woods. When they became tired,"
+  ]
+}
