@@ -2,11 +2,13 @@
 
 M-cubed studies how small an understandable model can be while still passing a defined evaluation. **The first experiment is text only:** a compact nanochat-derived model trained from scratch on a bounded TinyStories subset.
 
+The first Mac GPU pilot passed: 200 steps in 55 seconds, validation loss 7.624 → 4.930. Text generation works but remains incoherent. See [pilot results](reports/pilot-001.json).
+
 Start with [requirements](docs/REQUIREMENTS.md), [experiment 001](docs/EXPERIMENT_001.md), [current status](docs/STATUS.md), and [Codex setup](docs/CODEX.md).
 
 ## Run on this Mac
 
-The setup creates a Python 3.11 environment. Run all commands from the repository root. This workspace already has the environment and prepared data; skip their creation when continuing here.
+The setup creates a Python 3.11 environment. The verified local pilot already exists at `runs/pilot-001`; use `runs/pilot-002` if repeating it. Run all commands from the repository root. This workspace already has the environment and prepared data; skip their creation when continuing here.
 
 ```sh
 cd /Users/uw/Desktop/MCubed

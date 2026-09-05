@@ -2,6 +2,7 @@ import argparse
 import contextlib
 import io
 import json
+import math
 import tempfile
 import unittest
 from pathlib import Path
@@ -12,6 +13,7 @@ from mcubed.model import GPT, GPTConfig
 from mcubed.common import digest, verify_data, write_json
 from mcubed.prepare import select
 from mcubed.train import batch, evaluate, train
+from mcubed.evaluate import test as score_test
 
 
 class CoreTests(unittest.TestCase):
@@ -45,6 +47,25 @@ class CoreTests(unittest.TestCase):
         seen = set()
         self.assertEqual(select(iter(['a story', 'a  story', 'new']), 2, seen), ['a story', 'new'])
         self.assertEqual(select(iter(['a story', 'held out']), 1, seen), ['held out'])
+
+    def test_heldout_scoring_covers_tail_and_preserves_report(self):
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            root = Path(tmp)
+            (np.arange(20) % 16).astype('<u2').tofile(root / 'test.bin')
+            write_json(root / 'manifest.json', {'sha256': {'test.bin': digest(root / 'test.bin')}})
+            c = dict(vocab_size=16, block_size=8, n_layer=1, n_head=2, n_embd=16)
+            model = GPT(GPTConfig(**c))
+            torch.nn.init.zeros_(model.lm_head.weight)  # Uniform distribution: exact reference NLL.
+            torch.save({'model_config': c, 'model': model.state_dict(), 'step': 0,
+                'data_hash': digest(root / 'manifest.json')}, root / 'model.pt')
+            args = argparse.Namespace(output=str(root / 'report.json'), device='cpu',
+                checkpoint=str(root / 'model.pt'), data=str(root))
+            score_test(args)
+            report = json.loads(Path(args.output).read_text())
+            self.assertEqual(report['tokens_scored'], 19)
+            self.assertAlmostEqual(report['test_loss'], math.log(16), places=6)
+            with self.assertRaisesRegex(ValueError, 'already exists'):
+                score_test(args)
 
     def test_stop_resume_matches_uninterrupted_and_detects_tampering(self):
         with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):

@@ -1,0 +1,105 @@
+{
+  "experiment": "001-pilot",
+  "date": "2026-09-05",
+  "source_commit": "d0d2b4260a9c2edea8c97da6c1708cd7164051d5",
+  "source_was_clean": true,
+  "config": {
+    "seed": 1337,
+    "n_layer": 4,
+    "n_head": 4,
+    "n_embd": 128,
+    "block_size": 256,
+    "batch_size": 8,
+    "gradient_accumulation": 2,
+    "max_steps": 200,
+    "eval_interval": 50,
+    "eval_batches": 10,
+    "learning_rate": 0.0006,
+    "min_lr": 6e-05,
+    "warmup_steps": 10,
+    "weight_decay": 0.1,
+    "grad_clip": 1.0,
+    "max_seconds": 600
+  },
+  "data_manifest_sha256": "ba66e1b75b1b1a68cc8913b2155c9eaea3ecbdfb5a828e15d5ad9e09d3a005da",
+  "device": "mps",
+  "summary": {
+    "status": "complete",
+    "step": 200,
+    "best_val_loss": 4.930346727371216,
+    "initial_val_loss": 7.623896980285645,
+    "loss_reduced": true,
+    "elapsed_seconds": 54.58502008299911,
+    "tokens_seen": 819200,
+    "estimated_compute_usd": 0.0,
+    "parameters_total": 1310720,
+    "weights_fp32_bytes": 5242880,
+    "checkpoint_bytes": 15760021
+  },
+  "validation_curve": [
+    {
+      "event": "eval",
+      "train_loss": 7.62411847114563,
+      "val_loss": 7.623896980285645,
+      "val_perplexity": 2046.5218656456075,
+      "elapsed_seconds": 1.665,
+      "step": 0,
+      "tokens_seen": 0,
+      "estimated_compute_usd": 0.0
+    },
+    {
+      "event": "eval",
+      "train_loss": 5.902360677719116,
+      "val_loss": 5.887947273254395,
+      "val_perplexity": 360.66417898271135,
+      "elapsed_seconds": 28.051,
+      "step": 50,
+      "tokens_seen": 204800,
+      "estimated_compute_usd": 0.0
+    },
+    {
+      "event": "eval",
+      "train_loss": 5.319123077392578,
+      "val_loss": 5.308826971054077,
+      "val_perplexity": 202.11300487525935,
+      "elapsed_seconds": 40.489,
+      "step": 100,
+      "tokens_seen": 409600,
+      "estimated_compute_usd": 0.0
+    },
+    {
+      "event": "eval",
+      "train_loss": 5.045079231262207,
+      "val_loss": 5.022169971466065,
+      "val_perplexity": 151.74021874188574,
+      "elapsed_seconds": 48.003,
+      "step": 150,
+      "tokens_seen": 614400,
+      "estimated_compute_usd": 0.0
+    },
+    {
+      "event": "eval",
+      "train_loss": 4.95380129814148,
+      "val_loss": 4.930346727371216,
+      "val_perplexity": 138.42750062344933,
+      "elapsed_seconds": 54.403,
+      "step": 200,
+      "tokens_seen": 819200,
+      "estimated_compute_usd": 0.0
+    }
+  ],
+  "generation": {
+    "prompt": "Once upon a time, a little rabbit",
+    "text": "Once upon a time, a little rabbit the sun with.\nThe small. One day's take the sun, it to see the mad. He asked. The garden and went and she wanted a big very happy. You wanted\n\"That it.\n\"This to be so good of the dog the bird had a time to go her the little girl.<|endoftext|>Once\nLily felt scared. We was the big little upon Lily to see, he saw a long a time, but \"But her he decided.\n\"That",
+    "checkpoint_step": 200,
+    "seed": 42,
+    "temperature": 0.8,
+    "device": "mps",
+    "new_tokens": 100,
+    "seconds": 6.762435417000233,
+    "tokens_per_second": 14.787571907689918,
+    "timing_scope": "generation only; includes first-call warmup, excludes model load; no KV cache"
+  },
+  "interpretation": "Pipeline passed; generated text remains incoherent. No capacity or concept claim. Test set untouched.",
+  "cost_scope": "process runtime x supplied rate; excludes idle VM/storage/network/electricity/API fees"
+}
